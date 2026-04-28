@@ -2,27 +2,26 @@ import subprocess
 import sys
 
 
-def run_on_pico(code: str, port: str = "auto", exec_timeout_s: float = 20.0):
+DEFAULT_PORT = "COM3"
+
+
+def run_on_pico(code: str, port: str = DEFAULT_PORT, exec_timeout_s: float = 5.0):
     cmd = [sys.executable, "-m", "mpremote", "connect", port, "exec", code]
     proc = subprocess.run(cmd, capture_output=True, text=True, timeout=exec_timeout_s)
     return proc.stdout.strip(), proc.stderr.strip()
 
 
-LED_CODE = '''
+def led_code(enabled: bool) -> str:
+    value = 1 if enabled else 0
+    return f'''
 from machine import Pin
-from utime import sleep
-
-sleep(0.01)
-print("Hello, Pi Pico!")
 
 try:
     led = Pin("LED", Pin.OUT)
 except Exception:
     led = Pin(25, Pin.OUT)
 
-for _ in range(20):
-    led.toggle()
-    sleep(0.5)
+led.value({value})
 '''
 
 
@@ -32,21 +31,26 @@ def list_ports():
     return proc.stdout.strip(), proc.stderr.strip()
 
 
-def run(port: str = "COM3"):
-    ports_out, ports_err = list_ports()
-    out, err = run_on_pico(LED_CODE, port=port, exec_timeout_s=20)
+def set_led(enabled: bool, port: str = DEFAULT_PORT):
+    out, err = run_on_pico(led_code(enabled), port=port, exec_timeout_s=5)
     return {
-        "ports": ports_out or "Keine Ports von mpremote erkannt.",
-        "ports_error": ports_err,
         "stdout": out,
         "stderr": err,
     }
 
 
+def port_check():
+    ports_out, ports_err = list_ports()
+    return {
+        "ports": ports_out or "Keine Ports von mpremote erkannt.",
+        "stderr": ports_err,
+        "hint": "Damit alle Skripte funktionieren, muss der Raspberry Pi Pico auf COM3 angeschlossen sein.",
+    }
+
+
 if __name__ == "__main__":
-    result = run()
+    result = port_check()
     print(result["ports"])
-    if result["ports_error"]:
-        print("PORT STDERR:\n", result["ports_error"])
-    print("STDOUT:\n", result["stdout"])
-    print("STDERR:\n", result["stderr"])
+    print(result["hint"])
+    if result["stderr"]:
+        print("STDERR:\n", result["stderr"])
