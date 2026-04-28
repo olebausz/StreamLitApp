@@ -1,6 +1,7 @@
 import streamlit as st
 import LED
 import Nash
+import Soul
 
 st.title("Meine App")
 
@@ -23,3 +24,6 @@ if st.button("Starte LED"):
 
 if st.button("Starte Nash"):
     Nash.run()
+
+if st.button("Start Soul"):
+    Soul.run()

@@ -2,3 +2,5 @@ Genereller Plan des Projekts ist es sich in Streamlit soweit reinzulesen, dass i
 
 Tag 1 progress:
 Erste Funktionen in Streamlit ausprobiert und total von Magic geflasht, Nash.py fertiggestellt und optimiert sowie LED Skript in .py Datei verfasst und erstmalig ausgeführt
+
+### Achtung, alle Skripte für den RaspyPico laufen auf dem Port COM3 und nicht auto
