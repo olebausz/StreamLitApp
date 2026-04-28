@@ -1,0 +1,13 @@
+[project]
+name = "streamlitapp"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "ipykernel>=7.2.0",
+    "matplotlib>=3.10.9",
+    "mpremote>=1.28.0",
+    "numpy>=2.4.4",
+    "streamlit>=1.56.0",
+]
